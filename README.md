@@ -36,7 +36,7 @@ We are making parsing *like* that SVG-Path parsing, but with arbitrarily defined
 * `str` string types can contain letters, so these cannot take non-backtick quoted strings as multiple commands. The first string can be accepted without COMMA_WS characters, however if the first element of a new cycle is a string it must be backticked so that the we can determine whether this is more data of the original command or a new command.
 * other: other types are taken as strings and these are passed into the type given in arguments. The only permitted initialization used on an undefined type is a `str`. We treat the parsing exactly like a string. For example if we have `complex` we can call that with `100+2j` and it will feed that as a string into the `complex('100+2j')`. Undefined types also have the same multi-call limiting factor of strings.
 
-#Examples
+# Examples:
 
 Assuming: `@command(parser, "j", float, float)`
 
