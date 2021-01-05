@@ -28,10 +28,17 @@ flag_re = re.compile('|'.join('(?P<%s>%s)' % pair for pair in flag_parse))
 
 str_parse = [
     ('QSTR', r'`([^`]*)`'),
-    ('DSTR', r'[^ ,\t\n\x09\x0A\x0C\x0D]*'),
+    ('DSTR', r'[^ ,\t\n\x09\x0A\x0C\x0D]+'),
     ('SKIP', PATTERN_COMMAWSP),
 ]
 str_re = re.compile('|'.join('(?P<%s>%s)' % pair for pair in str_parse))
+
+more_parse = [
+    ('FLOAT', PATTERN_FLOAT),
+    ('BTICK', r'`'),
+    ('SKIP', PATTERN_COMMAWSP)
+]
+more_re = re.compile('|'.join('(?P<%s>%s)' % pair for pair in more_parse))
 
 
 def command(parser, letters, *arguments):
@@ -67,13 +74,14 @@ class PathlikeParser:
             self.pos = match.end()
             kind = match.lastgroup
             if kind == 'SKIP':
+                self.pos = match.end()
                 continue
             return match.group()
         return None
 
     def _more(self):
         while self.pos < self.limit:
-            match = num_re.match(self.pathd, self.pos)
+            match = more_re.match(self.pathd, self.pos)
             if match is None:
                 return False
             kind = match.lastgroup
@@ -103,6 +111,7 @@ class PathlikeParser:
                 break  # No more matches.
             kind = match.lastgroup
             if kind == 'SKIP':
+                self.pos = match.end()
                 continue
             self.pos = match.end()
             return bool(int(match.group()))
@@ -115,6 +124,7 @@ class PathlikeParser:
                 break  # No more matches.
             kind = match.lastgroup
             if kind == 'SKIP':
+                self.pos = match.end()
                 continue
             self.pos = match.end()
             if kind == 'QSTR':
@@ -123,7 +133,6 @@ class PathlikeParser:
         return None
 
     def parse(self, pathd):
-        print(pathd)
         if isinstance(pathd, (tuple, list)):
             pathd = " ".join(pathd)
         self.pathd = pathd
