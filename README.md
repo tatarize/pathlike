@@ -156,3 +156,84 @@ def rev(b, q):
 
 Because the boolean comes before the string, we can determine that more commands are needed for the `a` command. We only need backticks to capture COMMA_WS characters or if the the more parsing is ambiguous. `yellow blue` would return None for the bool, which becomes `False` but the next iteration the first character is `b` which is a new command and is expected to be either `0` or `1`
 
+# Longer Example
+
+```python
+from sys import argv
+from pathlike import PathlikeParser, command
+
+parser = PathlikeParser()
+
+
+@command(parser, "zZ")
+def close():
+    print("Closed.")
+
+
+@command(parser, "mM", float, float)
+def move_rel(x, y):
+    print("Moved %f %f" % (x,y))
+
+
+@command(parser, "lL", float, float)
+def move_rel(x, y):
+    print("Line-to %f %f" % (x,y))
+
+
+@command(parser, "hH", float)
+def move_rel(x):
+    print("Horizontal %f" % (x))
+
+
+@command(parser, "vV", float)
+def move_rel(y):
+    print("Vertical %f" % (y))
+
+
+@command(parser, "tT", float, float)
+def move_rel(x, y):
+    print("Smooth-quad %f %f" % (x,y))
+
+
+@command(parser, "qQ", float, float, float, float)
+def move_rel(cx, cy, x, y):
+    print("Quad To %f %f, %f %f" % (cx, cy, x, y))
+
+
+@command(parser, "sS", float, float, float, float)
+def move_rel(cx, cy, x, y):
+    print("Smooth Cubic To %f %f, %f %f" % (cx, cy, x, y))
+
+
+@command(parser, "cC", float, float, float, float,  float, float)
+def move_rel(cx1, cy1, cx2, cy2, x, y):
+    print("Cubic To %f %f, %f %f, %f %f" % (cx1, cy1, cx2, cy2, x, y))
+
+
+@command(parser, "aA", float, float, float, bool,  bool, float, float)
+def move_rel(cx, cy, rot, sweep, large_arc, x, y):
+    print("Arc cx:%f cy:%f, rot:%f, %d %d, to: %f %f" % (cx, cy, rot, sweep, large_arc, x, y))
+
+
+args = argv[1:]
+parser.parse(args)
+```
+
+This parses SVG paths.
+These paths are tricky parsing paths from the test files put out by W3C.
+
+```
+> myscript.py M200,120 h-25 a25,25 0 1125,25 z
+> Moved 200.000000 120.000000
+> Horizontal -25.000000
+> Arc cx:25.000000 cy:25.000000, rot:0.000000, 1 1, to: 25.000000 25.000000
+> Closed.
+
+
+> myscript.py M280,120 h25 a25,25 0 6 0 -25,25 z"
+> Moved 280.000000 120.000000
+> Horizontal 25.000000
+> Arc cx:25.000000 cy:25.000000, rot:0.000000, 1 0, to: -25.000000 25.000000
+> Closed.
+```
+
