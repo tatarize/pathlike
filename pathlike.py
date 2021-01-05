@@ -1,54 +1,5 @@
 """
 Pathlike Parser parses command line arguments like svg paths.
-
-The parsing of attributes is done in the same greedy form adjacent parsing as found in the
-svg spec. However this is not intended to parse svg path objects but arbitrary command line
-data. The general command is a single character followed by a series of numbers or flags these
-are always allowed to repeat at the end of the series.
-
-The commands can be any single letter ascii in upper or lower case that is not the letter 'e' (reserved for floats)
-
-eg:
-myscript.py j200 50 30-7qql200.3
-
-This runs arbitrary command j with (200, 50, 30, and -7), command q, command q and command l with 200.3
-
-in addition, some commands can accept strings these are expected to be placed into quotes:
-
-eg.
-myscript.py p"hello world"
-
-Runs arbitrary command p with string "hello world".
-
-myscript.py p"hello world""this is me" runs command p with "hello world" then command p with "this is me"
-
-Repeated instances are make repeated calls to the same command.
-
-Alternatively if we are not using quoted syntax the remainder of the current COMMAWSP delinated element is used.
-
-myscript.py pHi
-
-This is treated as p("Hi") rather than p, H, i
-
-myscript.py p Hi.
-
-Is likewise treated as p("Hi.") rather than p, H, i
-
----
-
-To define a particular element we use decorators, due to the simplicity these commands accept their arguments
-directly. There are no cases to permit optional flags or anything else.
-
-@pathlike.command('j', arguments=(float, float, str))
-
-We also only support principle types since everything needs to be known. Unknown types are treated
-like string commands and we attempt to type cast them.
-
-@pathlike.command('f', arguments=(Color)) expects 1 argument that consists of a color:
-
-myscript.py f"Blue"
-
-
 """
 
 import re
@@ -76,9 +27,9 @@ flag_parse = [
 flag_re = re.compile('|'.join('(?P<%s>%s)' % pair for pair in flag_parse))
 
 str_parse = [
-    ('QSTR', r'"[^"]*"'),
+    ('QSTR', r'`([^`]*)`'),
+    ('DSTR', r'[^ ,\t\n\x09\x0A\x0C\x0D]*'),
     ('SKIP', PATTERN_COMMAWSP),
-    ('DSTR', r'[^ ,\t\n\x09\x0A\x0C\x0D]*')
 ]
 str_re = re.compile('|'.join('(?P<%s>%s)' % pair for pair in str_parse))
 
@@ -166,10 +117,13 @@ class PathlikeParser:
             if kind == 'SKIP':
                 continue
             self.pos = match.end()
+            if kind == 'QSTR':
+                return str(match.group())[1:-1]
             return str(match.group())
         return None
 
     def parse(self, pathd):
+        print(pathd)
         if isinstance(pathd, (tuple, list)):
             pathd = " ".join(pathd)
         self.pathd = pathd
