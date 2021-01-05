@@ -145,13 +145,14 @@ def rev(b, q):
         print(q[::-1])
 ```
 
-
+```
 > myscript.py a 1yellow 0blue 1red 0backwards 1forwards
 > yellow
 > eulb
 > red
 > sdrawkcab
 > forwards
+```
 
 Because the boolean comes before the string, we can determine that more commands are needed for the `a` command. We only need backticks to capture COMMA_WS characters or if the the more parsing is ambiguous. `yellow blue` would return None for the bool, which becomes `False` but the next iteration the first character is `b` which is a new command and is expected to be either `0` or `1`
 
