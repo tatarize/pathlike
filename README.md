@@ -171,47 +171,47 @@ def close():
 
 
 @command(parser, "mM", float, float)
-def move_rel(x, y):
+def cmd(x, y):
     print("Moved %f %f" % (x,y))
 
 
 @command(parser, "lL", float, float)
-def move_rel(x, y):
+def cmd(x, y):
     print("Line-to %f %f" % (x,y))
 
 
 @command(parser, "hH", float)
-def move_rel(x):
+def cmd(x):
     print("Horizontal %f" % (x))
 
 
 @command(parser, "vV", float)
-def move_rel(y):
+def cmd(y):
     print("Vertical %f" % (y))
 
 
 @command(parser, "tT", float, float)
-def move_rel(x, y):
+def cmd(x, y):
     print("Smooth-quad %f %f" % (x,y))
 
 
 @command(parser, "qQ", float, float, float, float)
-def move_rel(cx, cy, x, y):
+def cmd(cx, cy, x, y):
     print("Quad To %f %f, %f %f" % (cx, cy, x, y))
 
 
 @command(parser, "sS", float, float, float, float)
-def move_rel(cx, cy, x, y):
+def cmd(cx, cy, x, y):
     print("Smooth Cubic To %f %f, %f %f" % (cx, cy, x, y))
 
 
 @command(parser, "cC", float, float, float, float,  float, float)
-def move_rel(cx1, cy1, cx2, cy2, x, y):
+def cmd(cx1, cy1, cx2, cy2, x, y):
     print("Cubic To %f %f, %f %f, %f %f" % (cx1, cy1, cx2, cy2, x, y))
 
 
 @command(parser, "aA", float, float, float, bool,  bool, float, float)
-def move_rel(cx, cy, rot, sweep, large_arc, x, y):
+def cmd(cx, cy, rot, sweep, large_arc, x, y):
     print("Arc cx:%f cy:%f, rot:%f, %d %d, to: %f %f" % (cx, cy, rot, sweep, large_arc, x, y))
 
 
