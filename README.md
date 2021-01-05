@@ -3,6 +3,10 @@ SVG-Path like parsing for command line and other parsing.
 
 Pathlike does parsing of strings into executable calls like svg-pathd parsing.
 
+Installing:
+`pip install pathlike`
+
+
 See:
 https://www.w3.org/TR/SVG/paths.html
 
