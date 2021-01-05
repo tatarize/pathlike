@@ -21,7 +21,7 @@ num_parse = [
 num_re = re.compile('|'.join('(?P<%s>%s)' % pair for pair in num_parse))
 
 flag_parse = [
-    ('FLAG', r'[01]'),
+    ('FLAG', r'[0-9]'),
     ('SKIP', PATTERN_COMMAWSP)
 ]
 flag_re = re.compile('|'.join('(?P<%s>%s)' % pair for pair in flag_parse))
@@ -74,7 +74,6 @@ class PathlikeParser:
             self.pos = match.end()
             kind = match.lastgroup
             if kind == 'SKIP':
-                self.pos = match.end()
                 continue
             return match.group()
         return None
@@ -98,9 +97,9 @@ class PathlikeParser:
             if match is None:
                 break  # No more matches.
             kind = match.lastgroup
+            self.pos = match.end()
             if kind == 'SKIP':
                 continue
-            self.pos = match.end()
             return float(match.group())
         return None
 
@@ -110,10 +109,9 @@ class PathlikeParser:
             if match is None:
                 break  # No more matches.
             kind = match.lastgroup
-            if kind == 'SKIP':
-                self.pos = match.end()
-                continue
             self.pos = match.end()
+            if kind == 'SKIP':
+                continue
             return bool(int(match.group()))
         return None
 
@@ -123,10 +121,9 @@ class PathlikeParser:
             if match is None:
                 break  # No more matches.
             kind = match.lastgroup
-            if kind == 'SKIP':
-                self.pos = match.end()
-                continue
             self.pos = match.end()
+            if kind == 'SKIP':
+                continue
             if kind == 'QSTR':
                 return str(match.group())[1:-1]
             return str(match.group())
